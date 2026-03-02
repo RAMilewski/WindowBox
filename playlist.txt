@@ -1,0 +1,24 @@
+# WindowBox Playlist
+# Format:  duration_seconds, days, timespan, filename
+#
+# duration  seconds the image is shown before moving to the next
+# days      | delimited list of day specs (case-insensitive):
+#             all                    every day
+#             Mon Tue Wed Thu Fri Sat Sun   named weekday (3-letter or full)
+#             first Mon              first Monday of the month
+#             2nd Wed                second Wednesday of the month
+#             last Fri               last Friday of the month
+#             Mon|Wed|Fri            multiple days separated by |
+# timespan  HH:MM-HH:MM (24-hour clock) or  all
+# filename  file inside the images/ subdirectory (.jpg .png .gif, animated ok)
+#
+# Lines starting with # are comments and are ignored.
+#
+# ---- Examples (remove the leading # to activate) ----
+#
+# 10, all, all, sample.jpg
+# 30, Mon|Wed|Fri, 09:00-17:00, office.png
+# 20, first Mon, 00:00-23:59, first_monday.gif
+# 15, last Fri, 17:00-20:00, friday_evening.jpg
+# 60, Sat|Sun, 08:00-12:00, weekend_morning.png
+# 45, Wed, 12:00-13:00, wednesday_lunch.jpg

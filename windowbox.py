@@ -249,6 +249,7 @@ class WindowBox:
         self.root.title("WindowBox")
         self.root.configure(bg="black")
         self.root.attributes("-fullscreen", True)
+        self.root.attributes("-zoomed", True)
         self.root.bind("<Escape>", lambda _: self.root.attributes("-fullscreen", False))
         self.root.bind("f", lambda _: self.root.attributes("-fullscreen", True))
         self.root.bind("q", lambda _: self.root.destroy())

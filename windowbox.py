@@ -8,9 +8,8 @@ according to scheduling rules (day of week, day of month, time of day).
 Supports static .jpg/.png and animated .gif/.png (APNG).
 
 Controls:
-  Escape  - exit fullscreen
-  f       - enter fullscreen
-  q       - quit
+  q          - quit
+  Ctrl+C     - quit (from SSH terminal)
 """
 
 import sys
@@ -249,10 +248,11 @@ class WindowBox:
         self.root = root
         self.root.title("WindowBox")
         self.root.configure(bg="black")
-        self.root.update()
-        self.root.attributes("-fullscreen", True)
-        self.root.bind("<Escape>", lambda _: self.root.attributes("-fullscreen", False))
-        self.root.bind("f", lambda _: self.root.attributes("-fullscreen", True))
+        self.root.overrideredirect(True)
+        self.root.update_idletasks()
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        self.root.geometry(f"{sw}x{sh}+0+0")
         self.root.bind("q", lambda _: self.root.destroy())
 
         self.label = tk.Label(self.root, bg="black", bd=0)

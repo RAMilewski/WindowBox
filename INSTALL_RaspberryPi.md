@@ -132,7 +132,7 @@ labwc does not use the LXDE autostart folder, but the XDG autostart method (`~/.
 
 ## Tips
 
-- **Fullscreen is the default.** Press `Escape` to exit fullscreen, `f` to re-enter, `q` to quit.
+- **Fullscreen is the default.** Press `q` to quit when at the Pi keyboard, or `Ctrl+C` from an SSH terminal. To kill it from a second terminal: `pkill -f windowbox.py`
 - **Animated GIFs and APNGs** require Pillow ≥ 9.4.0 — the `pip install Pillow` command above installs a compatible version.
 - If the display is rotated, add `display_rotate=1` (or `2`/`3`) to `/boot/config.txt`.
 - If running **headless** (no desktop at all), set up a desktop session or use a framebuffer-based viewer instead — tkinter requires a running X/Wayland display.

@@ -40,12 +40,12 @@ Raspberry Pi OS Bookworm (2023+) restricts system-wide `pip` installs. Use a vir
 cd ~/WindowBox
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install Pillow
 ```
 
 On older Pi OS versions (Bullseye and earlier) you can skip the venv:
 ```bash
-pip3 install -r requirements.txt
+pip3 install Pillow
 ```
 
 ## 5. Add images and edit the playlist
@@ -133,6 +133,6 @@ labwc does not use the LXDE autostart folder, but the XDG autostart method (`~/.
 ## Tips
 
 - **Fullscreen is the default.** Press `Escape` to exit fullscreen, `f` to re-enter, `q` to quit.
-- **Animated GIFs and APNGs** require Pillow ≥ 9.4.0 — the `requirements.txt` already specifies this.
+- **Animated GIFs and APNGs** require Pillow ≥ 9.4.0 — the `pip install Pillow` command above installs a compatible version.
 - If the display is rotated, add `display_rotate=1` (or `2`/`3`) to `/boot/config.txt`.
 - If running **headless** (no desktop at all), set up a desktop session or use a framebuffer-based viewer instead — tkinter requires a running X/Wayland display.

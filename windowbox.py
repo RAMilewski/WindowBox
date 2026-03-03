@@ -14,6 +14,7 @@ Controls:
 """
 
 import sys
+import signal
 import datetime
 import re
 import tkinter as tk
@@ -383,6 +384,7 @@ def main():
 
     root = tk.Tk()
     WindowBox(root)
+    signal.signal(signal.SIGINT, lambda *_: root.destroy())
     try:
         root.mainloop()
     except KeyboardInterrupt:

@@ -1,0 +1,14 @@
+# WindowBox Priority Playlist
+# Format:  duration_seconds, days, timespan, filename
+#
+# Priority items are displayed between each regular playlist item.
+# One priority item is shown after each playlist item, cycling through
+# all eligible entries in this file.  If no priority items are eligible,
+# the regular playlist continues uninterrupted.
+#
+# The format is identical to playlist.txt.
+#
+# Examples (uncomment and add matching image files to images/):
+# 15, all, all, announcement.png
+# 10, Mon|Wed|Fri, 09:00-17:00, staff_notice.jpg
+# 20, first Mon, all, monthly_update.png

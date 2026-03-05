@@ -28,6 +28,7 @@ except ImportError:
 BASE_DIR = Path(__file__).parent
 IMAGES_DIR = BASE_DIR / "images"
 PLAYLIST_FILE = BASE_DIR / "playlist.txt"
+PRIORITY_FILE = BASE_DIR / "priority.txt"
 
 # Maps lowercase day names to Python weekday numbers (Mon=0 .. Sun=6)
 DAY_NAMES = {
@@ -265,6 +266,9 @@ class WindowBox:
         self._frame_idx = 0
         self._entries = []
         self._entry_idx = 0
+        self._priority_entries = []
+        self._priority_idx = 0
+        self._showing_priority = False
 
         self._load_and_show()
 
@@ -280,10 +284,17 @@ class WindowBox:
                 setattr(self, attr, None)
 
     def _load_and_show(self):
-        """Reload the playlist and start cycling; retry later if nothing active."""
+        """Reload both playlists and start cycling; retry later if nothing active."""
         self._cancel_jobs()
+        now = datetime.datetime.now()
+
         playlist = parse_playlist(PLAYLIST_FILE)
-        self._entries = active_entries(playlist, datetime.datetime.now(), IMAGES_DIR)
+        self._entries = active_entries(playlist, now, IMAGES_DIR)
+
+        priority = parse_playlist(PRIORITY_FILE)
+        self._priority_entries = active_entries(priority, now, IMAGES_DIR)
+        self._priority_idx = 0
+        self._showing_priority = False
 
         if not self._entries:
             self._show_message("No images scheduled")
@@ -294,11 +305,14 @@ class WindowBox:
         self._show_entry()
 
     def _show_entry(self):
-        """Display the entry at _entry_idx."""
+        """Display the playlist entry at _entry_idx."""
         self._cancel_jobs()
-        entry = self._entries[self._entry_idx]
-        duration_ms = int(entry["duration"] * 1000)
+        self._showing_priority = False
+        self._display_entry(self._entries[self._entry_idx])
 
+    def _display_entry(self, entry):
+        """Load and display a single entry dict."""
+        duration_ms = int(entry["duration"] * 1000)
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
 
@@ -310,7 +324,6 @@ class WindowBox:
             return
 
         self._frame_idx = 0
-
         if len(self._frames) > 1:
             self._animate()
         else:
@@ -326,10 +339,12 @@ class WindowBox:
         self._anim_job = self.root.after(delay, self._animate)
 
     def _advance(self):
-        """Move to the next active entry, re-filtering by current time."""
+        """After each playlist item, show the next eligible priority item (if any),
+        then move on to the next playlist item."""
         self._cancel_jobs()
         now = datetime.datetime.now()
-        # Drop entries whose time window has now expired
+
+        # Re-filter playlist by current time
         self._entries = [
             e for e in self._entries
             if time_in_span(now, e["start_min"], e["end_min"])
@@ -337,6 +352,22 @@ class WindowBox:
         if not self._entries:
             self._load_and_show()
             return
+
+        if not self._showing_priority:
+            # Just finished a playlist item — insert a priority item if available
+            self._priority_entries = [
+                e for e in self._priority_entries
+                if time_in_span(now, e["start_min"], e["end_min"])
+            ]
+            if self._priority_entries:
+                self._priority_idx = self._priority_idx % len(self._priority_entries)
+                entry = self._priority_entries[self._priority_idx]
+                self._priority_idx = (self._priority_idx + 1) % len(self._priority_entries)
+                self._showing_priority = True
+                self._display_entry(entry)
+                return
+
+        # Advance to next playlist item
         self._entry_idx = (self._entry_idx + 1) % len(self._entries)
         self._show_entry()
 

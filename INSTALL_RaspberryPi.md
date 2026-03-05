@@ -48,7 +48,7 @@ On older Pi OS versions (Bullseye and earlier) you can skip the venv:
 pip3 install Pillow
 ```
 
-## 5. Add images and edit the playlist
+## 5. Add images and edit the playlists
 
 ```bash
 cp your-images/*.jpg ~/WindowBox/images/
@@ -58,6 +58,12 @@ nano ~/WindowBox/playlist.txt
 Uncomment and edit the example lines. A minimal working entry:
 ```
 10, all, all, your-image.jpg
+```
+
+**Priority playlist** (`priority.txt`) — optional. Items here are shown between each regular playlist item, one at a time, cycling through all eligible entries. If no priority items are currently eligible the regular playlist continues uninterrupted. The format is identical to `playlist.txt`:
+
+```bash
+nano ~/WindowBox/priority.txt
 ```
 
 ## 6. Run it

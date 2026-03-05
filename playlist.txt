@@ -29,3 +29,4 @@
 5, all, all, SteampunkLogo.png
 5, all, all, ToysInside.png
 5, all, all, TuesNight.png 
+5, all, all, 3DP-1.png

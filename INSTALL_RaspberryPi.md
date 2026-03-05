@@ -134,5 +134,36 @@ labwc does not use the LXDE autostart folder, but the XDG autostart method (`~/.
 
 - **Fullscreen is the default.** Press `q` to quit when at the Pi keyboard, or `Ctrl+C` from an SSH terminal. To kill it from a second terminal: `pkill -f windowbox.py`
 - **Animated GIFs and APNGs** require Pillow ≥ 9.4.0 — the `pip install Pillow` command above installs a compatible version.
-- If the display is rotated, add `display_rotate=1` (or `2`/`3`) to `/boot/config.txt`.
+- **Display rotation on Trixie:** `display_rotate` in `/boot/firmware/config.txt` does not work with the KMS driver. Use `wlr-randr` instead (see below).
 - If running **headless** (no desktop at all), set up a desktop session or use a framebuffer-based viewer instead — tkinter requires a running X/Wayland display.
+
+---
+
+## Display rotation on Trixie (KMS/Wayland)
+
+`display_rotate` in `/boot/firmware/config.txt` has no effect on Pi OS Trixie because the KMS graphics driver is used. Rotate the display via `wlr-randr` instead.
+
+**Install wlr-randr:**
+```bash
+sudo apt install wlr-randr
+```
+
+**Find your output name:**
+```bash
+wlr-randr
+```
+Look for a line like `HDMI-A-1` or `DSI-1`.
+
+**Rotate it:**
+```bash
+wlr-randr --output HDMI-A-1 --transform 90
+```
+Transform values: `normal`, `90`, `180`, `270`
+
+**Make it permanent** by adding the command to labwc's autostart:
+```bash
+mkdir -p ~/.config/labwc
+echo 'wlr-randr --output HDMI-A-1 --transform 90' >> ~/.config/labwc/autostart
+```
+
+Replace `HDMI-A-1` with your actual output name and `90` with your desired rotation.

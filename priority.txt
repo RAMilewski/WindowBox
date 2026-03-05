@@ -12,3 +12,6 @@
 # 15, all, all, announcement.png
 # 10, Mon|Wed|Fri, 09:00-17:00, staff_notice.jpg
 # 20, first Mon, all, monthly_update.png
+
+10, Sat, 14:00-16:00, PeekInside.png
+3, all, all, Dragon.png

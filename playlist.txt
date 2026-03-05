@@ -22,3 +22,10 @@
 # 15, last Fri, 17:00-20:00, friday_evening.jpg
 # 60, Sat|Sun, 08:00-12:00, weekend_morning.png
 # 45, Wed, 12:00-13:00, wednesday_lunch.jpg
+
+5, all, all, SparkStudio.png
+5, all, all, MakeStuff.png
+5, all, all, OpenHouseSat.png
+5, all, all, SteampunkLogo.png
+5, all, all, ToysInside.png
+5, all, all, TuesNight.png 

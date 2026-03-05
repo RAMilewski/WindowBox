@@ -104,7 +104,20 @@ pkill -f windowbox.py
 
 ---
 
-## 7. Auto-start on boot
+## 7. Reload playlists without restarting
+
+After editing `playlist.txt` or `priority.txt`, or adding new images,
+send a reload signal — no restart needed:
+
+```bash
+pkill -USR1 -f windowbox.py
+```
+
+WindowBox will immediately reload both playlists and pick up any new images.
+
+---
+
+## 8. Auto-start on boot
 
 To launch WindowBox automatically when the Pi boots into its desktop,
 create an XDG autostart entry:
@@ -171,5 +184,6 @@ Replace `HDMI-A-1` with your actual output name and `90` with your rotation.
 
 - Press `q` at the Pi keyboard to quit, or `Ctrl+C` in the terminal.
 - `git pull` inside `~/WindowBox` to get the latest updates from GitHub.
+- `git stash` before `git pull` if you have local changes to playlist files; `git stash pop` to restore them after.
 - Animated GIFs and APNGs are supported and loop for the duration of their playlist slot.
 - If running headless (no desktop), tkinter requires a running X/Wayland display — WindowBox will not work without one.

@@ -414,8 +414,22 @@ def main():
         return
 
     root = tk.Tk()
-    WindowBox(root)
+    app = WindowBox(root)
+
+    _reload_flag = [False]
+
+    def _on_usr1(*_):
+        _reload_flag[0] = True
+
+    def _poll_reload():
+        if _reload_flag[0]:
+            _reload_flag[0] = False
+            app._load_and_show()
+        root.after(500, _poll_reload)
+
     signal.signal(signal.SIGINT, lambda *_: root.destroy())
+    signal.signal(signal.SIGUSR1, _on_usr1)
+    root.after(500, _poll_reload)
     try:
         root.mainloop()
     except KeyboardInterrupt:

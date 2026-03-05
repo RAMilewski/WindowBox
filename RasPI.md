@@ -107,17 +107,56 @@ pkill -f windowbox.py
 ## 7. Reload playlists without restarting
 
 After editing `playlist.txt` or `priority.txt`, or adding new images,
-send a reload signal — no restart needed:
+run the reload script — no restart needed:
+
+```bash
+~/WindowBox/reload.sh
+```
+
+Make it executable first if needed:
+
+```bash
+chmod +x ~/WindowBox/reload.sh
+```
+
+This pulls the latest changes from GitHub and signals WindowBox to reload
+both playlists immediately.
+
+To reload without pulling from GitHub (e.g. after editing files directly
+on the Pi):
 
 ```bash
 pkill -USR1 -f windowbox.py
 ```
 
-WindowBox will immediately reload both playlists and pick up any new images.
+---
+
+## 8. Auto-reload on a schedule
+
+To pull updates from GitHub and reload WindowBox automatically once an hour,
+add a cron job:
+
+```bash
+crontab -e
+```
+
+Add this line:
+
+```
+0 * * * * /home/ram/WindowBox/reload.sh
+```
+
+> Replace `/home/ram` with your actual home directory.
+
+Verify it was saved:
+
+```bash
+crontab -l
+```
 
 ---
 
-## 8. Auto-start on boot
+## 9. Auto-start on boot
 
 To launch WindowBox automatically when the Pi boots into its desktop,
 create an XDG autostart entry:

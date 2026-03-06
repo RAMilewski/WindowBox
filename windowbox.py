@@ -34,7 +34,7 @@ PRIORITY_FILE = BASE_DIR / "priority.txt"
 # 1.0 = no correction (normal display).
 # Example: monitor is physically 2560x1080 but Pi outputs 1920x1080 →
 #   the monitor stretches width by 2560/1920 = 4/3, so correct with 3/4.
-DISPLAY_SQUISH = 1.0
+DISPLAY_SQUISH = 3/4
 
 # Maps lowercase day names to Python weekday numbers (Mon=0 .. Sun=6)
 DAY_NAMES = {

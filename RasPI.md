@@ -193,13 +193,20 @@ of 2560x1080 but report themselves to the system as 1920x1080, then stretch
 the incoming signal horizontally to fill the panel. This makes standard images
 look distorted.
 
-WindowBox can pre-squish images to compensate. Edit `windowbox.py` and change
-the `DISPLAY_SQUISH` constant near the top of the file:
+WindowBox can pre-squish images to compensate. Edit `windowbox.py` and set
+the two constants near the top of the file:
 
 ```python
-# For a 2560x1080 panel driven at 1920x1080:
-DISPLAY_SQUISH = 3/4   # 1920 ÷ 2560
+DISPLAY_SQUISH = 3/4            # Pi output width ÷ panel native width
+DISPLAY_SQUISH_AXIS = "height"  # "width" for landscape, "height" for 90°/270° rotation
 ```
+
+The correction factor is always `Pi output ÷ panel native` — in this case
+`1920 ÷ 2560 = 3/4`.
+
+If the display is rotated 90° or 270° via `wlr-randr`, the monitor's
+horizontal stretch maps to the vertical axis in logical screen space, so use
+`"height"`. For an unrotated landscape display use `"width"`.
 
 The default value of `1.0` disables the correction (normal display).
 Your original image files are not modified — the correction is applied at

@@ -30,11 +30,14 @@ IMAGES_DIR = BASE_DIR / "images"
 PLAYLIST_FILE = BASE_DIR / "playlist.txt"
 PRIORITY_FILE = BASE_DIR / "priority.txt"
 
-# Horizontal squish correction for monitors that stretch their input signal.
+# Aspect correction for monitors that stretch their input signal.
 # 1.0 = no correction (normal display).
 # Example: monitor is physically 2560x1080 but Pi outputs 1920x1080 →
-#   the monitor stretches width by 2560/1920 = 4/3, so correct with 3/4.
+#   the monitor stretches by 2560/1920 = 4/3, so correct with 3/4.
+# On a display rotated 90°, the monitor's horizontal stretch becomes vertical
+#   in logical screen space, so the squish is applied to the height axis.
 DISPLAY_SQUISH = 3/4
+DISPLAY_SQUISH_AXIS = "height"  # "width" for landscape, "height" for 90°/270° rotation
 
 # Maps lowercase day names to Python weekday numbers (Mon=0 .. Sun=6)
 DAY_NAMES = {
@@ -239,15 +242,21 @@ def load_frames(filepath, screen_w, screen_h):
 def _fit(img, screen_w, screen_h):
     """Scale img to fit screen while preserving aspect ratio.
 
-    If DISPLAY_SQUISH != 1.0, the image is pre-squished horizontally so it
-    looks correct on a monitor that stretches its input (e.g. a 2560x1080
-    panel driven at 1920x1080).
+    If DISPLAY_SQUISH != 1.0, the image is pre-squished along DISPLAY_SQUISH_AXIS
+    to compensate for a monitor that stretches its input signal.
+    Use "width" for landscape orientation, "height" for 90°/270° rotation.
     """
     iw, ih = img.size
-    effective_w = screen_w / DISPLAY_SQUISH
-    scale = min(effective_w / iw, screen_h / ih)
-    fitted_w = max(1, int(iw * scale * DISPLAY_SQUISH))
-    fitted_h = max(1, int(ih * scale))
+    if DISPLAY_SQUISH_AXIS == "height":
+        effective_h = screen_h / DISPLAY_SQUISH
+        scale = min(screen_w / iw, effective_h / ih)
+        fitted_w = max(1, int(iw * scale))
+        fitted_h = max(1, int(ih * scale * DISPLAY_SQUISH))
+    else:
+        effective_w = screen_w / DISPLAY_SQUISH
+        scale = min(effective_w / iw, screen_h / ih)
+        fitted_w = max(1, int(iw * scale * DISPLAY_SQUISH))
+        fitted_h = max(1, int(ih * scale))
     return img.resize((fitted_w, fitted_h), Image.LANCZOS)
 
 

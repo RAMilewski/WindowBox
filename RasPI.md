@@ -82,10 +82,22 @@ cd ~/WindowBox
 ./startbox.sh
 ```
 
-Make the script executable first if needed:
+Make the scripts executable first if needed:
 
 ```bash
-chmod +x ~/WindowBox/startbox.sh
+chmod +x ~/WindowBox/startbox.sh ~/WindowBox/killbox.sh ~/WindowBox/reload.sh
+```
+
+**To run detached** (survives closing the terminal):
+
+```bash
+~/WindowBox/startbox.sh -b
+```
+
+Output is logged to `~/WindowBox/windowbox.log`. To watch it live:
+
+```bash
+tail -f ~/WindowBox/windowbox.log
 ```
 
 From an SSH session (to display on the Pi screen):
@@ -96,10 +108,10 @@ source venv/bin/activate
 DISPLAY=:0 WAYLAND_DISPLAY=wayland-1 python3 windowbox.py
 ```
 
-**To stop:** press `Ctrl+C` in the terminal, or from another terminal:
+**To stop:** press `q` at the Pi keyboard, `Ctrl+C` in the terminal, or:
 
 ```bash
-pkill -f windowbox.py
+~/WindowBox/killbox.sh
 ```
 
 ---
@@ -255,8 +267,9 @@ Replace `HDMI-A-1` with your actual output name and `90` with your rotation.
 
 ## Tips
 
-- Press `q` at the Pi keyboard to quit, or `Ctrl+C` in the terminal.
-- `git pull` inside `~/WindowBox` to get the latest updates from GitHub.
+- Press `q` at the Pi keyboard to quit, or run `~/WindowBox/killbox.sh` from any terminal.
+- `~/WindowBox/reload.sh` pulls from GitHub and reloads playlists without restarting.
+- `~/WindowBox/startbox.sh -b` runs WindowBox detached from the terminal; logs go to `windowbox.log`.
 - `git stash` before `git pull` if you have local changes to playlist files; `git stash pop` to restore them after.
 - Animated GIFs and APNGs are supported and loop for the duration of their playlist slot.
 - If running headless (no desktop), tkinter requires a running X/Wayland display — WindowBox will not work without one.

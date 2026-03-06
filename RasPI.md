@@ -186,6 +186,33 @@ sudo reboot
 
 ---
 
+## Display aspect ratio correction
+
+Some monitors (such as LG HDR WFHD ultrawide panels) have a native resolution
+of 2560x1080 but report themselves to the system as 1920x1080, then stretch
+the incoming signal horizontally to fill the panel. This makes standard images
+look distorted.
+
+WindowBox can pre-squish images to compensate. Edit `windowbox.py` and change
+the `DISPLAY_SQUISH` constant near the top of the file:
+
+```python
+# For a 2560x1080 panel driven at 1920x1080:
+DISPLAY_SQUISH = 3/4   # 1920 ÷ 2560
+```
+
+The default value of `1.0` disables the correction (normal display).
+Your original image files are not modified — the correction is applied at
+display time. Set it back to `1.0` if you move to a standard monitor.
+
+After editing, reload WindowBox:
+
+```bash
+~/WindowBox/reload.sh
+```
+
+---
+
 ## Display rotation
 
 `display_rotate` in `/boot/firmware/config.txt` has no effect on Trixie

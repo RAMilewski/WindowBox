@@ -30,6 +30,12 @@ IMAGES_DIR = BASE_DIR / "images"
 PLAYLIST_FILE = BASE_DIR / "playlist.txt"
 PRIORITY_FILE = BASE_DIR / "priority.txt"
 
+# Horizontal squish correction for monitors that stretch their input signal.
+# 1.0 = no correction (normal display).
+# Example: monitor is physically 2560x1080 but Pi outputs 1920x1080 →
+#   the monitor stretches width by 2560/1920 = 4/3, so correct with 3/4.
+DISPLAY_SQUISH = 1.0
+
 # Maps lowercase day names to Python weekday numbers (Mon=0 .. Sun=6)
 DAY_NAMES = {
     "mon": 0, "monday": 0,
@@ -231,10 +237,18 @@ def load_frames(filepath, screen_w, screen_h):
 
 
 def _fit(img, screen_w, screen_h):
-    """Scale img to fit screen while preserving aspect ratio."""
+    """Scale img to fit screen while preserving aspect ratio.
+
+    If DISPLAY_SQUISH != 1.0, the image is pre-squished horizontally so it
+    looks correct on a monitor that stretches its input (e.g. a 2560x1080
+    panel driven at 1920x1080).
+    """
     iw, ih = img.size
-    scale = min(screen_w / iw, screen_h / ih)
-    return img.resize((max(1, int(iw * scale)), max(1, int(ih * scale))), Image.LANCZOS)
+    effective_w = screen_w / DISPLAY_SQUISH
+    scale = min(effective_w / iw, screen_h / ih)
+    fitted_w = max(1, int(iw * scale * DISPLAY_SQUISH))
+    fitted_h = max(1, int(ih * scale))
+    return img.resize((fitted_w, fitted_h), Image.LANCZOS)
 
 
 # ---------------------------------------------------------------------------

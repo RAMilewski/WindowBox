@@ -13,6 +13,7 @@ Controls:
 """
 
 import sys
+import glob
 import signal
 import datetime
 import re
@@ -282,6 +283,9 @@ class WindowBox:
         self.label = tk.Label(self.root, bg="black", bd=0)
         self.label.place(relx=0.5, rely=0.5, anchor="center")
 
+        self._cursor_visible = True
+        self._poll_mouse()
+
         self._anim_job = None
         self._switch_job = None
         self._frames = []
@@ -397,6 +401,17 @@ class WindowBox:
     # ------------------------------------------------------------------
     # Utilities
     # ------------------------------------------------------------------
+
+    def _poll_mouse(self):
+        """Show or hide the cursor depending on whether a mouse is connected."""
+        has_mouse = bool(glob.glob("/dev/input/mouse*"))
+        if has_mouse and not self._cursor_visible:
+            self.root.configure(cursor="")
+            self._cursor_visible = True
+        elif not has_mouse and self._cursor_visible:
+            self.root.configure(cursor="none")
+            self._cursor_visible = False
+        self.root.after(3000, self._poll_mouse)
 
     def _show_message(self, msg):
         self.label.configure(image="", text=msg, fg="gray", font=("Helvetica", 24))

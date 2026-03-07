@@ -56,12 +56,6 @@ Edit the main playlist:
 nano ~/WindowBox/playlist.txt
 ```
 
-Uncomment and edit the example lines. A minimal working entry:
-
-```
-10, all, all, your-image.jpg
-```
-
 **Priority playlist** (`priority.txt`) — optional. Items here are shown
 between each regular playlist item, cycling through all eligible entries.
 If no priority items are eligible the regular playlist continues
@@ -69,6 +63,86 @@ uninterrupted. The format is identical to `playlist.txt`:
 
 ```bash
 nano ~/WindowBox/priority.txt
+```
+
+---
+
+## Playlist format
+
+Each non-blank, non-comment line has four comma-separated fields:
+
+```
+duration, days, timespan, filename
+```
+
+### duration
+
+Number of seconds to display the image. Decimals are allowed (`2.5`).
+Animated GIFs and APNGs loop continuously for the full duration.
+
+### days
+
+Controls which days of the month the entry is shown.
+Multiple specs can be combined with `|` (no spaces around the pipe).
+Matching is case-insensitive.
+
+| Spec | Meaning |
+|---|---|
+| `all` or `*` | Every day |
+| `Mon` `Tue` `Wed` `Thu` `Fri` `Sat` `Sun` | Every occurrence of that weekday |
+| `Monday` `Tuesday` … | Full weekday names also accepted |
+| `1st Mon` or `first Mon` | First Monday of the month |
+| `2nd Tue` or `second Tue` | Second Tuesday of the month |
+| `3rd Wed` or `third Wed` | Third Wednesday |
+| `4th Thu` or `fourth Thu` | Fourth Thursday |
+| `5th Fri` or `fifth Fri` | Fifth Friday (only exists some months) |
+| `last Sat` | Last Saturday of the month |
+| `1` … `31` | Specific date number (e.g. `1` = the 1st of every month) |
+
+Both the numeric form (`2nd`) and the word form (`second`) are accepted.
+Examples of combined specs:
+
+```
+Mon|Wed|Fri          weekdays only
+Sat|Sun              weekends only
+1st Mon|3rd Mon      first and third Monday
+```
+
+### timespan
+
+A 24-hour time range, or `all` for no time restriction:
+
+```
+all                  any time of day
+09:00-17:00          9 am to 5 pm
+22:00-06:00          spans midnight (late night to early morning)
+```
+
+### filename
+
+The name of a file inside the `images/` subdirectory.
+Supported formats: `.jpg`, `.png`, `.gif`, animated `.gif`, animated `.png` (APNG).
+
+### Examples
+
+```
+# Show for 10 seconds, every day, all day
+10, all, all, logo.png
+
+# Show on weekday mornings only
+30, Mon|Tue|Wed|Thu|Fri, 08:00-12:00, weekday_morning.jpg
+
+# Show on the first Monday of each month
+20, 1st Mon, all, monthly_update.png
+
+# Show on the last Friday afternoon
+15, last Fri, 13:00-17:00, friday_special.jpg
+
+# Show on the 1st of every month
+60, 1, all, monthly_banner.png
+
+# Animated GIF shown every Saturday morning
+10, Sat, 08:00-12:00, weekend.gif
 ```
 
 ---

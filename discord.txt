@@ -10,6 +10,7 @@ The project is on GitHub at https://https://github.com/RAMilewski/WindowBox.  I 
 
 Installation and operation instructions are in RasPi.md, and there is a PDF version of that doc as well in RasPi.pdf.
 
-If you would like to add a graphic to the rotation it needs to be in portrait orientation and 2530x1080 pixels in size.  Submit it as a pull request to GitHub.  You can either make edits to playlist.txt and/or priority.txt (see the docs), or just put a remark in the PR saying when you would like the graphic to play.
+If you would like to add a graphic to the rotation it needs to be a GIF, PNG or JPEG in portrait orientation and 2530x1080 pixels in size.  Submit it as a pull request to GitHub.  You can either make edits to playlist.txt and/or priority.txt (see the docs), or just put a remark in the PR saying when you would like the graphic to play. 
 
-I've included the SCAD file for the mount in the repository just for completeness, but I doubt it will be of use to anyone else as our mounting requirements here are a bit strange.
+Claude is of the opinion that animated GIFs and PNGs (APNG) will work, but those have as yet gone untested.
+

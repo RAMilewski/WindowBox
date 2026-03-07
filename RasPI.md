@@ -168,10 +168,11 @@ chmod +x ~/WindowBox/startbox.sh ~/WindowBox/killbox.sh ~/WindowBox/reload.sh
 ~/WindowBox/startbox.sh -b
 ```
 
-Output is logged to `~/WindowBox/windowbox.log`. To watch it live:
+Output is logged to `~/WindowBox/windowbox.log`. Playlist and media activity (which image is showing, file changes) is logged separately to `~/WindowBox/media.log`. To watch them live:
 
 ```bash
 tail -f ~/WindowBox/windowbox.log
+tail -f ~/WindowBox/media.log
 ```
 
 From an SSH session (to display on the Pi screen):
@@ -343,7 +344,7 @@ Replace `HDMI-A-1` with your actual output name and `90` with your rotation.
 
 - Press `q` at the Pi keyboard to quit, or run `~/WindowBox/killbox.sh` from any terminal.
 - `~/WindowBox/reload.sh` pulls from GitHub and reloads playlists without restarting.
-- `~/WindowBox/startbox.sh -b` runs WindowBox detached from the terminal; logs go to `windowbox.log`.
+- `~/WindowBox/startbox.sh -b` runs WindowBox detached from the terminal; general logs go to `windowbox.log`, media activity to `media.log`.
 - `git stash` before `git pull` if you have local changes to playlist files; `git stash pop` to restore them after.
 - Animated GIFs and APNGs are supported and loop for the duration of their playlist slot.
 - If running headless (no desktop), tkinter requires a running X/Wayland display — WindowBox will not work without one.

@@ -35,6 +35,12 @@ logging.basicConfig(
 )
 log = logging.getLogger("windowbox")
 
+_media_handler = logging.FileHandler(Path(__file__).parent / "media.log")
+_media_handler.setFormatter(logging.Formatter("%(asctime)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"))
+media_log = logging.getLogger("windowbox.media")
+media_log.addHandler(_media_handler)
+media_log.propagate = False
+
 BASE_DIR = Path(__file__).parent
 IMAGES_DIR = BASE_DIR / "images"
 PLAYLIST_FILE = BASE_DIR / "playlist.txt"
@@ -328,12 +334,12 @@ class WindowBox:
 
         pm = PLAYLIST_FILE.stat().st_mtime if PLAYLIST_FILE.exists() else None
         if self._playlist_mtime is not None and pm != self._playlist_mtime:
-            log.info("playlist.txt changed")
+            media_log.info("playlist.txt changed")
         self._playlist_mtime = pm
 
         qm = PRIORITY_FILE.stat().st_mtime if PRIORITY_FILE.exists() else None
         if self._priority_mtime is not None and qm != self._priority_mtime:
-            log.info("priority.txt changed")
+            media_log.info("priority.txt changed")
         self._priority_mtime = qm
 
         playlist = parse_playlist(PLAYLIST_FILE)
@@ -366,7 +372,7 @@ class WindowBox:
         sh = self.root.winfo_screenheight()
 
         source = "priority" if self._showing_priority else "playlist"
-        log.info("Showing [%s] %s (%.0fs)", source, entry["filename"], entry["duration"])
+        media_log.info("Showing [%s] %s (%.0fs)", source, entry["filename"], entry["duration"])
         try:
             self._frames, self._delays = load_frames(entry["filepath"], sw, sh)
         except Exception as exc:

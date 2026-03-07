@@ -14,6 +14,7 @@ Controls:
 
 import sys
 import glob
+import logging
 import signal
 import datetime
 import re
@@ -25,6 +26,14 @@ try:
 except ImportError:
     print("Pillow is required. Install with: pip install Pillow")
     sys.exit(1)
+
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+log = logging.getLogger("windowbox")
 
 BASE_DIR = Path(__file__).parent
 IMAGES_DIR = BASE_DIR / "images"
@@ -114,7 +123,7 @@ def _make_day_checker(spec):
     except ValueError:
         pass
 
-    print(f"Warning: unrecognised day spec '{spec}', will never match.")
+    log.warning("Unrecognised day spec '%s', will never match.", spec)
     return lambda d: False
 
 
@@ -140,7 +149,7 @@ def parse_timespan(ts):
         sh, sm, eh, em = (int(x) for x in m.groups())
         return (sh * 60 + sm, eh * 60 + em)
 
-    print(f"Warning: unrecognised timespan '{ts}', defaulting to all day.")
+    log.warning("Unrecognised timespan '%s', defaulting to all day.", ts)
     return (0, 1440)
 
 
@@ -168,7 +177,7 @@ def parse_playlist(filepath):
                     continue
                 parts = [p.strip() for p in line.split(",")]
                 if len(parts) < 4:
-                    print(f"Warning: playlist line {lineno} has fewer than 4 fields, skipping.")
+                    log.warning("Playlist line %d has fewer than 4 fields, skipping.", lineno)
                     continue
                 try:
                     duration = float(parts[0])
@@ -184,9 +193,9 @@ def parse_playlist(filepath):
                         "filename": filename,
                     })
                 except ValueError as exc:
-                    print(f"Warning: playlist line {lineno} parse error ({exc}), skipping.")
+                    log.warning("Playlist line %d parse error (%s), skipping.", lineno, exc)
     except FileNotFoundError:
-        print(f"Playlist not found: {filepath}")
+        log.warning("Playlist not found: %s", filepath)
     return entries
 
 
@@ -201,7 +210,7 @@ def active_entries(entries, now, images_dir):
             continue
         fp = images_dir / e["filename"]
         if not fp.exists():
-            print(f"Warning: image not found: {fp}")
+            log.warning("Image not found: %s", fp)
             continue
         result.append({**e, "filepath": fp})
     return result
@@ -286,6 +295,8 @@ class WindowBox:
         self._cursor_visible = True
         self._poll_mouse()
 
+        self._playlist_mtime = None
+        self._priority_mtime = None
         self._anim_job = None
         self._switch_job = None
         self._frames = []
@@ -315,6 +326,16 @@ class WindowBox:
         self._cancel_jobs()
         now = datetime.datetime.now()
 
+        pm = PLAYLIST_FILE.stat().st_mtime if PLAYLIST_FILE.exists() else None
+        if self._playlist_mtime is not None and pm != self._playlist_mtime:
+            log.info("playlist.txt changed")
+        self._playlist_mtime = pm
+
+        qm = PRIORITY_FILE.stat().st_mtime if PRIORITY_FILE.exists() else None
+        if self._priority_mtime is not None and qm != self._priority_mtime:
+            log.info("priority.txt changed")
+        self._priority_mtime = qm
+
         playlist = parse_playlist(PLAYLIST_FILE)
         self._entries = active_entries(playlist, now, IMAGES_DIR)
 
@@ -324,6 +345,7 @@ class WindowBox:
         self._showing_priority = False
 
         if not self._entries:
+            log.info("No images scheduled, retrying in %ds", self.IDLE_CHECK_MS // 1000)
             self._show_message("No images scheduled")
             self._switch_job = self.root.after(self.IDLE_CHECK_MS, self._load_and_show)
             return
@@ -343,10 +365,12 @@ class WindowBox:
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
 
+        source = "priority" if self._showing_priority else "playlist"
+        log.info("Showing [%s] %s (%.0fs)", source, entry["filename"], entry["duration"])
         try:
             self._frames, self._delays = load_frames(entry["filepath"], sw, sh)
         except Exception as exc:
-            print(f"Error loading {entry['filepath']}: {exc}")
+            log.error("Error loading %s: %s", entry["filepath"], exc)
             self._advance()
             return
 
@@ -451,6 +475,7 @@ def main():
         print("Then edit playlist.txt and restart.")
         return
 
+    log.info("WindowBox started")
     root = tk.Tk()
     app = WindowBox(root)
 
@@ -462,6 +487,7 @@ def main():
     def _poll_reload():
         if _reload_flag[0]:
             _reload_flag[0] = False
+            log.info("Reload signal received")
             app._load_and_show()
         root.after(500, _poll_reload)
 
@@ -472,6 +498,7 @@ def main():
         root.mainloop()
     except KeyboardInterrupt:
         root.destroy()
+    log.info("WindowBox stopped")
 
 
 if __name__ == "__main__":

@@ -18,4 +18,5 @@
 5, 2nd Sat|4th Sat, 12:00-18:00, FiberArts.png
 5, 1st Wed, 08:00-20:30, 3DP-1.png
 5, 3rd Thu, 08:00-20:00, Retro.png
+5, 3rd Wed, 08:00-20:30, HackSalemTonight.png
 

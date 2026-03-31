@@ -6,7 +6,7 @@ export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-1}
 
 # Apply display settings from windowbox.cfg
 if command -v wlr-randr &>/dev/null && [ -f windowbox.cfg ]; then
-    read -r WB_OUTPUT WB_ROTATION WB_RES < <(python3 - <<'EOF'
+    WB_VALS=$(python3 - <<'EOF'
 import configparser
 c = configparser.ConfigParser()
 c.read('windowbox.cfg')
@@ -14,6 +14,7 @@ d = c['display'] if 'display' in c else {}
 print(d.get('output','HDMI-A-1'), d.get('rotation','normal'), d.get('resolution','1920x1080'))
 EOF
 )
+    read -r WB_OUTPUT WB_ROTATION WB_RES <<< "$WB_VALS"
     # Derive physical pre-rotation mode by swapping W×H for 90°/270° rotations
     W=${WB_RES%x*}
     H=${WB_RES#*x}

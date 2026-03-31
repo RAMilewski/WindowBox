@@ -16,7 +16,7 @@ sudo apt update && sudo apt upgrade -y
 ## 2. Install system dependencies
 
 ```bash
-sudo apt install -y python3-tk python3-full git wlr-randr
+sudo apt install -y python3-tk python3-pil python3-pil.imagetk python3-full git wlr-randr
 ```
 
 ---
@@ -31,13 +31,12 @@ git clone https://github.com/RAMilewski/WindowBox.git ~/windowbox
 
 ## 4. Install Python dependencies
 
-Trixie restricts system-wide `pip` installs. Use a virtual environment:
+Trixie restricts system-wide `pip` installs. Create a virtual environment that
+shares the system packages (including the Pillow installed in step 2):
 
 ```bash
 cd ~/windowbox
 python3 -m venv --system-site-packages venv
-source venv/bin/activate
-pip install Pillow
 ```
 
 ---

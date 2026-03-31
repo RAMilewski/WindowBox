@@ -1,6 +1,6 @@
 #!/bin/bash
 if pkill -f windowbox.py; then
-    echo "WindowBox stopped."
+    echo "windowbox stopped."
 else
-    echo "WindowBox is not running."
+    echo "windowbox is not running."
 fi

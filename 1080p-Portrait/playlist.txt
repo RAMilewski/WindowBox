@@ -23,17 +23,11 @@
 # 60, Sat|Sun, 08:00-12:00, weekend_morning.png
 # 45, Wed, 12:00-13:00, wednesday_lunch.jpg
 
-5, all, all, SparkStudio.png
-5, all, all, MakeStuff.png
-5, all, all, SatOpenHouse.png
-5, all, all, Tools&Toys.png
-5, all, all, TuesNight.png 
+
 5, all, all, 3DP-1.png
 5, all, all, FiberArts.png
-5, all, all, Dragon.png
 5, all, all, Design3d.png
-5, all, all, Retro.png
 5, all, all, Unexpected.png
 5, all, all, 3DP-Beginner.png
 5, all, all, JoinDiscord.png
-
+    

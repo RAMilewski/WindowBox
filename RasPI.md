@@ -1,4 +1,4 @@
-# Installing WindowBox on Raspberry Pi OS (Trixie)
+# Installing windowbox on Raspberry Pi OS (Trixie)
 
 These instructions are for Raspberry Pi OS based on Debian 13 (Trixie),
 using the Wayland/labwc desktop.
@@ -24,7 +24,7 @@ sudo apt install -y python3-tk python3-full git wlr-randr
 ## 3. Clone the repository
 
 ```bash
-git clone https://github.com/RAMilewski/WindowBox.git ~/WindowBox
+git clone https://github.com/RAMilewski/WindowBox.git ~/windowbox
 ```
 
 ---
@@ -34,8 +34,8 @@ git clone https://github.com/RAMilewski/WindowBox.git ~/WindowBox
 Trixie restricts system-wide `pip` installs. Use a virtual environment:
 
 ```bash
-cd ~/WindowBox
-python3 -m venv venv
+cd ~/windowbox
+python3 -m venv --system-site-packages venv
 source venv/bin/activate
 pip install Pillow
 ```
@@ -47,13 +47,13 @@ pip install Pillow
 Copy your image files into the `images/` subdirectory:
 
 ```bash
-cp /path/to/your/images/*.jpg ~/WindowBox/images/
+cp /path/to/your/images/*.jpg ~/windowbox/images/
 ```
 
 Edit the main playlist:
 
 ```bash
-nano ~/WindowBox/playlist.txt
+nano ~/windowbox/playlist.txt
 ```
 
 **Priority playlist** (`priority.txt`) — optional. Items here are shown
@@ -62,7 +62,7 @@ If no priority items are eligible the regular playlist continues
 uninterrupted. The format is identical to `playlist.txt`:
 
 ```bash
-nano ~/WindowBox/priority.txt
+nano ~/windowbox/priority.txt
 ```
 
 ---
@@ -152,33 +152,33 @@ Supported formats: `.jpg`, `.png`, `.gif`, animated `.gif`, animated `.png` (APN
 From a terminal on the Pi desktop:
 
 ```bash
-cd ~/WindowBox
+cd ~/windowbox
 ./startbox.sh
 ```
 
 Make the scripts executable first if needed:
 
 ```bash
-chmod +x ~/WindowBox/startbox.sh ~/WindowBox/killbox.sh ~/WindowBox/reload.sh
+chmod +x ~/windowbox/startbox.sh ~/windowbox/killbox.sh ~/windowbox/reload.sh
 ```
 
 **To run detached** (survives closing the terminal):
 
 ```bash
-~/WindowBox/startbox.sh -b
+~/windowbox/startbox.sh -b
 ```
 
-Output is logged to `~/WindowBox/windowbox.log`. Playlist and media activity (which image is showing, file changes) is logged separately to `~/WindowBox/media.log`. To watch them live:
+Output is logged to `~/windowbox/windowbox.log`. Playlist and media activity (which image is showing, file changes) is logged separately to `~/windowbox/media.log`. To watch them live:
 
 ```bash
-tail -f ~/WindowBox/windowbox.log
-tail -f ~/WindowBox/media.log
+tail -f ~/windowbox/windowbox.log
+tail -f ~/windowbox/media.log
 ```
 
 From an SSH session (to display on the Pi screen):
 
 ```bash
-cd ~/WindowBox
+cd ~/windowbox
 source venv/bin/activate
 DISPLAY=:0 WAYLAND_DISPLAY=wayland-1 python3 windowbox.py
 ```
@@ -186,7 +186,7 @@ DISPLAY=:0 WAYLAND_DISPLAY=wayland-1 python3 windowbox.py
 **To stop:** press `q` at the Pi keyboard, `Ctrl+C` in the terminal, or:
 
 ```bash
-~/WindowBox/killbox.sh
+~/windowbox/killbox.sh
 ```
 
 ---
@@ -197,16 +197,16 @@ After editing `playlist.txt` or `priority.txt`, or adding new images,
 run the reload script — no restart needed:
 
 ```bash
-~/WindowBox/reload.sh
+~/windowbox/reload.sh
 ```
 
 Make it executable first if needed:
 
 ```bash
-chmod +x ~/WindowBox/reload.sh
+chmod +x ~/windowbox/reload.sh
 ```
 
-This pulls the latest changes from GitHub and signals WindowBox to reload
+This pulls the latest changes from GitHub and signals windowbox to reload
 both playlists immediately.
 
 To reload without pulling from GitHub (e.g. after editing files directly
@@ -220,7 +220,7 @@ pkill -USR1 -f windowbox.py
 
 ## 8. Auto-reload on a schedule
 
-To pull updates from GitHub and reload WindowBox automatically once an hour,
+To pull updates from GitHub and reload windowbox automatically once an hour,
 add a cron job:
 
 ```bash
@@ -230,7 +230,7 @@ crontab -e
 Add this line:
 
 ```
-0 * * * * /home/ram/WindowBox/reload.sh
+0 * * * * /home/ram/windowbox/reload.sh
 ```
 
 > Replace `/home/ram` with your actual home directory.
@@ -245,7 +245,7 @@ crontab -l
 
 ## 9. Auto-start on boot
 
-To launch WindowBox automatically when the Pi boots into its desktop,
+To launch windowbox automatically when the Pi boots into its desktop,
 create an XDG autostart entry:
 
 ```bash
@@ -258,8 +258,8 @@ Paste this content:
 ```ini
 [Desktop Entry]
 Type=Application
-Name=WindowBox
-Exec=/bin/bash -c "cd /home/ram/WindowBox && source venv/bin/activate && python3 windowbox.py"
+Name=windowbox
+Exec=/home/ram/windowbox/startbox.sh
 X-GNOME-Autostart-enabled=true
 ```
 
@@ -273,78 +273,62 @@ sudo reboot
 
 ---
 
-## Display aspect ratio correction
+## Display configuration
 
-Some monitors (such as LG HDR WFHD ultrawide panels) have a native resolution
-of 2560x1080 but report themselves to the system as 1920x1080, then stretch
-the incoming signal horizontally to fill the panel. This makes standard images
-look distorted.
-
-WindowBox can pre-squish images to compensate. Edit `windowbox.py` and set
-the two constants near the top of the file:
-
-```python
-DISPLAY_SQUISH = 3/4            # Pi output width ÷ panel native width
-DISPLAY_SQUISH_AXIS = "height"  # "width" for landscape, "height" for 90°/270° rotation
-```
-
-The correction factor is always `Pi output ÷ panel native` — in this case
-`1920 ÷ 2560 = 3/4`.
-
-If the display is rotated 90° or 270° via `wlr-randr`, the monitor's
-horizontal stretch maps to the vertical axis in logical screen space, so use
-`"height"`. For an unrotated landscape display use `"width"`.
-
-The default value of `1.0` disables the correction (normal display).
-Your original image files are not modified — the correction is applied at
-display time. Set it back to `1.0` if you move to a standard monitor.
-
-After editing, reload WindowBox:
+All display settings live in `windowbox.cfg` in the project directory.
+`startbox.sh` reads this file on every launch (including at boot) and applies
+rotation and resolution via `wlr-randr` before starting windowbox.
 
 ```bash
-~/WindowBox/reload.sh
+nano ~/windowbox/windowbox.cfg
 ```
 
----
+| Field | Default | Description |
+|---|---|---|
+| `output` | `HDMI-A-1` | wlr-randr output name — run `wlr-randr` to list outputs |
+| `rotation` | `90` | Display rotation: `normal`, `90`, `180`, `270` |
+| `resolution` | `1080x1920` | Logical resolution after rotation (`WxH`) |
+| `squish` | `0.75` | Aspect correction factor (`1.0` = no correction) |
+| `squish_axis` | `height` | Axis to squish: `width` (landscape) or `height` (90°/270°) |
 
-## Display rotation
-
-`display_rotate` in `/boot/firmware/config.txt` has no effect on Trixie
-because the KMS graphics driver is used. Use `wlr-randr` instead
-(already installed in step 2).
-
-**Find your output name:**
+To find your output name:
 
 ```bash
 wlr-randr
 ```
 
-Look for a line like `HDMI-A-1` or `DSI-1`.
+Look for a line like `HDMI-A-1` or `DSI-1` and set `output` accordingly.
 
-**Rotate it:**
+### Aspect ratio correction
+
+Some monitors (such as LG HDR WFHD ultrawide panels) have a native resolution
+of 2560×1080 but accept a 1920×1080 signal and stretch it horizontally to fill
+the panel. This makes images look distorted.
+
+`squish` corrects for this: `Pi_output_dimension ÷ panel_native_dimension`.
+For the example above: `1920 ÷ 2560 = 0.75`.
+
+When the display is rotated 90° or 270°, the stretch maps to the vertical axis
+in logical screen space, so use `squish_axis = height`. For unrotated landscape
+use `squish_axis = width`. Set `squish = 1.0` for a standard monitor.
+
+Your original image files are never modified — correction is applied at display time.
+
+After editing `windowbox.cfg`, restart windowbox for the display settings to take effect:
 
 ```bash
-wlr-randr --output HDMI-A-1 --transform 90
+~/windowbox/killbox.sh
+~/windowbox/startbox.sh -b
 ```
-
-Transform values: `normal`, `90`, `180`, `270`
-
-**Make it permanent** by adding the command to labwc's autostart:
-
-```bash
-mkdir -p ~/.config/labwc
-echo 'wlr-randr --output HDMI-A-1 --transform 90' >> ~/.config/labwc/autostart
-```
-
-Replace `HDMI-A-1` with your actual output name and `90` with your rotation.
 
 ---
 
 ## Tips
 
-- Press `q` at the Pi keyboard to quit, or run `~/WindowBox/killbox.sh` from any terminal.
-- `~/WindowBox/reload.sh` pulls from GitHub and reloads playlists without restarting.
-- `~/WindowBox/startbox.sh -b` runs WindowBox detached from the terminal; general logs go to `windowbox.log`, media activity to `media.log`.
+- Press `q` at the Pi keyboard to quit, or run `~/windowbox/killbox.sh` from any terminal.
+- `~/windowbox/reload.sh` pulls from GitHub and reloads playlists without restarting.
+- `~/windowbox/startbox.sh -b` runs windowbox detached from the terminal; general logs go to `windowbox.log`, media activity to `media.log`.
+- Edit `windowbox.cfg` to change display rotation, resolution, or aspect correction — no code editing needed.
 - `git stash` before `git pull` if you have local changes to playlist files; `git stash pop` to restore them after.
 - Animated GIFs and APNGs are supported and loop for the duration of their playlist slot.
-- If running headless (no desktop), tkinter requires a running X/Wayland display — WindowBox will not work without one.
+- If running headless (no desktop), tkinter requires a running X/Wayland display — windowbox will not work without one.

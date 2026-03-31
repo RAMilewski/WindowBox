@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WindowBox - Calendar-aware image slideshow display.
+windowbox - Calendar-aware image slideshow display.
 
 Reads playlist.txt and displays images from the images/ subdirectory
 according to scheduling rules (day of week, day of month, time of day).
@@ -18,6 +18,7 @@ import logging
 import signal
 import datetime
 import re
+import configparser
 import tkinter as tk
 from pathlib import Path
 
@@ -45,15 +46,20 @@ BASE_DIR = Path(__file__).parent
 IMAGES_DIR = BASE_DIR / "images"
 PLAYLIST_FILE = BASE_DIR / "playlist.txt"
 PRIORITY_FILE = BASE_DIR / "priority.txt"
+CFG_FILE = BASE_DIR / "windowbox.cfg"
 
-# Aspect correction for monitors that stretch their input signal.
-# 1.0 = no correction (normal display).
-# Example: monitor is physically 2560x1080 but Pi outputs 1920x1080 →
-#   the monitor stretches by 2560/1920 = 4/3, so correct with 3/4.
-# On a display rotated 90°, the monitor's horizontal stretch becomes vertical
-#   in logical screen space, so the squish is applied to the height axis.
-DISPLAY_SQUISH = 3/4
-DISPLAY_SQUISH_AXIS = "height"  # "width" for landscape, "height" for 90°/270° rotation
+
+def _load_display_config():
+    """Read display settings from windowbox.cfg; return (squish, squish_axis)."""
+    cfg = configparser.ConfigParser()
+    cfg.read(CFG_FILE)
+    d = cfg["display"] if "display" in cfg else {}
+    squish = float(d.get("squish", "1.0"))
+    squish_axis = d.get("squish_axis", "width").strip().lower()
+    return squish, squish_axis
+
+
+DISPLAY_SQUISH, DISPLAY_SQUISH_AXIS = _load_display_config()
 
 # Maps lowercase day names to Python weekday numbers (Mon=0 .. Sun=6)
 DAY_NAMES = {
@@ -280,13 +286,13 @@ def _fit(img, screen_w, screen_h):
 # Main application
 # ---------------------------------------------------------------------------
 
-class WindowBox:
+class windowbox:
     # How often (ms) to re-check the playlist when nothing is scheduled
     IDLE_CHECK_MS = 30_000
 
     def __init__(self, root):
         self.root = root
-        self.root.title("WindowBox")
+        self.root.title("windowbox")
         self.root.configure(bg="black")
         self.root.overrideredirect(True)
         self.root.update_idletasks()
@@ -454,7 +460,7 @@ class WindowBox:
 def _write_sample_playlist():
     with open(PLAYLIST_FILE, "w") as fh:
         fh.write(
-            "# WindowBox Playlist\n"
+            "# windowbox Playlist\n"
             "# Format:  duration_seconds, days, timespan, filename\n"
             "#\n"
             "# duration  seconds the image is shown\n"
@@ -481,9 +487,9 @@ def main():
         print("Then edit playlist.txt and restart.")
         return
 
-    log.info("WindowBox started")
+    log.info("windowbox started")
     root = tk.Tk()
-    app = WindowBox(root)
+    app = windowbox(root)
 
     _reload_flag = [False]
 
@@ -504,7 +510,7 @@ def main():
         root.mainloop()
     except KeyboardInterrupt:
         root.destroy()
-    log.info("WindowBox stopped")
+    log.info("windowbox stopped")
 
 
 if __name__ == "__main__":

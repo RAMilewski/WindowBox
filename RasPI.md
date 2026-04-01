@@ -66,6 +66,33 @@ nano ~/windowbox/priority.txt
 
 ---
 
+## 6. Deploy a pre-built configuration
+
+If you have a configuration folder (containing `playlist.txt`, `priority.txt`,
+`windowbox.cfg`, and an `images/` subdirectory), use `deploy.sh` to install it:
+
+```bash
+~/windowbox/deploy.sh <config-folder>
+```
+
+The folder path is relative to the `windowbox` directory. For example:
+
+```bash
+~/windowbox/deploy.sh 1080p-Portrait
+```
+
+This copies all four items into `~/windowbox`, then signals windowbox to reload
+its playlists immediately. If windowbox is not running it prints a reminder to
+start it with `startbox.sh`.
+
+Make the script executable first if needed:
+
+```bash
+chmod +x ~/windowbox/deploy.sh
+```
+
+---
+
 ## Playlist format
 
 Each non-blank, non-comment line has four comma-separated fields:
@@ -146,7 +173,7 @@ Supported formats: `.jpg`, `.png`, `.gif`, animated `.gif`, animated `.png` (APN
 
 ---
 
-## 6. Run it
+## 7. Run it
 
 From a terminal on the Pi desktop:
 
@@ -158,7 +185,7 @@ cd ~/windowbox
 Make the scripts executable first if needed:
 
 ```bash
-chmod +x ~/windowbox/startbox.sh ~/windowbox/killbox.sh ~/windowbox/reload.sh
+chmod +x ~/windowbox/startbox.sh ~/windowbox/killbox.sh ~/windowbox/reload.sh ~/windowbox/deploy.sh
 ```
 
 **To run detached** (survives closing the terminal):
@@ -190,7 +217,7 @@ DISPLAY=:0 WAYLAND_DISPLAY=wayland-1 python3 windowbox.py
 
 ---
 
-## 7. Reload playlists without restarting
+## 8. Reload playlists without restarting
 
 After editing `playlist.txt` or `priority.txt`, or adding new images,
 run the reload script — no restart needed:
@@ -217,7 +244,7 @@ pkill -USR1 -f windowbox.py
 
 ---
 
-## 8. Auto-reload on a schedule
+## 9. Auto-reload on a schedule
 
 To pull updates from GitHub and reload windowbox automatically once an hour,
 add a cron job:
@@ -242,7 +269,7 @@ crontab -l
 
 ---
 
-## 9. Auto-start on boot
+## 10. Auto-start on boot
 
 To launch windowbox automatically when the Pi boots into its desktop,
 create an XDG autostart entry:
@@ -276,19 +303,20 @@ sudo reboot
 
 All display settings live in `windowbox.cfg` in the project directory.
 `startbox.sh` reads this file on every launch (including at boot) and applies
-rotation and resolution via `wlr-randr` before starting windowbox.
+the rotation via `wlr-randr` before starting windowbox. The rotation is also
+reapplied when windowbox exits, since the compositor resets it when XWayland closes.
 
 ```bash
 nano ~/windowbox/windowbox.cfg
 ```
 
-| Field | Default | Description |
-|---|---|---|
-| `output` | `HDMI-A-1` | wlr-randr output name — run `wlr-randr` to list outputs |
-| `rotation` | `90` | Display rotation: `normal`, `90`, `180`, `270` |
-| `resolution` | `1080x1920` | Logical resolution after rotation (`WxH`) |
-| `squish` | `0.75` | Aspect correction factor (`1.0` = no correction) |
-| `squish_axis` | `height` | Axis to squish: `width` (landscape) or `height` (90°/270°) |
+| Field | Description |
+|---|---|
+| `output` | wlr-randr output name — run `wlr-randr` to find yours (e.g. `HDMI-A-1`) |
+| `rotation` | Display rotation: `normal`, `90`, `180`, `270` |
+| `resolution` | Logical resolution after rotation (`WxH`) — for reference only |
+| `squish` | Aspect correction factor (`1.0` = no correction) |
+| `squish_axis` | Axis to squish: `width` (landscape) or `height` (90°/270°) |
 
 To find your output name:
 
@@ -327,7 +355,8 @@ After editing `windowbox.cfg`, restart windowbox for the display settings to tak
 - Press `q` at the Pi keyboard to quit, or run `~/windowbox/killbox.sh` from any terminal.
 - `~/windowbox/reload.sh` pulls from GitHub and reloads playlists without restarting.
 - `~/windowbox/startbox.sh -b` runs windowbox detached from the terminal; general logs go to `windowbox.log`, media activity to `media.log`.
-- Edit `windowbox.cfg` to change display rotation, resolution, or aspect correction — no code editing needed.
+- `~/windowbox/deploy.sh <folder>` installs a pre-built configuration (playlists, images, and `windowbox.cfg`) from a named subfolder and reloads immediately.
+- Edit `windowbox.cfg` to change display rotation or aspect correction — no code editing needed.
 - `git stash` before `git pull` if you have local changes to playlist files; `git stash pop` to restore them after.
 - Animated GIFs and APNGs are supported and loop for the duration of their playlist slot.
 - If running headless (no desktop), tkinter requires a running X/Wayland display — windowbox will not work without one.

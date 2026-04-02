@@ -78,7 +78,7 @@ If you have a configuration folder (containing `playlist.txt`, `priority.txt`,
 The folder path is relative to the `windowbox` directory. For example:
 
 ```bash
-~/windowbox/deploy.sh 1080p-Portrait
+~/windowbox/deploy.sh SatMKT
 ```
 
 This copies all four items into `~/windowbox`, then signals windowbox to reload
@@ -360,3 +360,4 @@ After editing `windowbox.cfg`, restart windowbox for the display settings to tak
 - `git stash` before `git pull` if you have local changes to playlist files; `git stash pop` to restore them after.
 - Animated GIFs and APNGs are supported and loop for the duration of their playlist slot.
 - If running headless (no desktop), tkinter requires a running X/Wayland display — windowbox will not work without one.
+- Run `./make_pdf.sh` (on the Mac) to regenerate `README.pdf` from `README.md`.

@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m py_compile windowbox.py)",
+      "Bash(pandoc --version)",
+      "Bash(python3 -c \"import markdown2\")",
+      "Bash(python3 -c \"import weasyprint\")",
+      "Bash(brew install pandoc)",
+      "Bash(pandoc RasPI.md -o RasPI.pdf --pdf-engine=wkhtmltopdf)",
+      "Bash(pandoc RasPI.md -o RasPI.pdf)",
+      "Bash(pandoc --list-output-formats)",
+      "Bash(brew install wkhtmltopdf)",
+      "Bash(brew install --cask wkhtmltopdf)",
+      "Bash(pip3 install weasyprint)",
+      "Bash(pandoc /Users/RAM/Documents/SPARK/WindowBox/RasPI.md -o /tmp/raspi.html --standalone --metadata title=\"WindowBox — Raspberry Pi Installation\")",
+      "Bash(python3 -c \"from weasyprint import HTML; HTML\\(''/tmp/raspi.html''\\).write_pdf\\(''/Users/RAM/Documents/SPARK/WindowBox/RasPI.pdf''\\)\")",
+      "Bash(pip3 install fpdf2 markdown)",
+      "Bash(pandoc /Users/RAM/Documents/SPARK/WindowBox/RasPI.md -o /Users/RAM/Documents/SPARK/WindowBox/RasPI.pdf --pdf-engine=ms)",
+      "Bash(groff --version)",
+      "Bash(brew list)",
+      "Bash(pip3 show reportlab)",
+      "Bash(pip3 show fpdf2)"
+    ]
+  }
+}

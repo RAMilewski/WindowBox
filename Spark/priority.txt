@@ -13,3 +13,11 @@
 # 10, Mon|Wed|Fri, 09:00-17:00, staff_notice.jpg
 # 20, first Mon, all, monthly_update.png
 
+5, SAT, 14:00-1600, OpenNow.png
+5, TUE, 18:00-19:30, OpenNow.png
+5, 2nd Sat|4th Sat, 12:00-18:00, FiberArts.png
+5, 1st Wed, 08:00-20:30, 3DP-1.png
+5, 3rd Thu, 08:00-20:00, Retro.png
+5, 3rd Wed, 08:00-20:00, HackSalemTonight.png
+
+

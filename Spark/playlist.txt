@@ -36,5 +36,5 @@
 5, all, all, Unexpected.png
 5, all, all, 3DP-Beginner.png
 5, all, all, JoinDiscord.png
-5, all, all, HackSalemDate.png
+#5, all, all, HackSalemDate.png
 

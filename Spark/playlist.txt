@@ -29,6 +29,7 @@
 5, all, all, Tools&Toys.png
 5, all, all, TuesNight.png 
 5, all, all, 3DP-1.png
+5, all, all, MeetupMonday.png
 5, all, all, FiberArts.png
 5, all, all, Dragon.png
 5, all, all, Design3d.png
@@ -36,5 +37,5 @@
 5, all, all, Unexpected.png
 5, all, all, 3DP-Beginner.png
 5, all, all, JoinDiscord.png
-#5, all, all, HackSalemDate.png
+5, all, all, Wandering-Ratchet.png
 
